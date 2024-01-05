@@ -1,0 +1,76 @@
+#include <stdio.h>
+#define MAX_HEAP_SIZE 100
+struct MinHeap {
+    int arr[MAX_HEAP_SIZE];
+    int size;
+};
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+void heapifyUp(struct MinHeap *heap, int index) {
+    int parent = (index - 1) / 2;
+    while (index > 0 && heap->arr[index] < heap->arr[parent]) {
+        swap(&heap->arr[index], &heap->arr[parent]);
+        index = parent;
+        parent = (index - 1) / 2;
+    }
+}
+void insert(struct MinHeap *heap, int value) {
+    if (heap->size >= MAX_HEAP_SIZE) {
+        printf("Heap overflow\n");
+        return;
+    }
+    heap->arr[heap->size] = value;
+    heap->size++;
+    heapifyUp(heap, heap->size - 1);
+}
+void heapifyDown(struct MinHeap *heap, int index) {
+    int leftChild = 2 * index + 1;
+    int rightChild = 2 * index + 2;
+    int smallest = index;
+    if (leftChild < heap->size && heap->arr[leftChild] < heap->arr[smallest])
+        smallest = leftChild;
+    if (rightChild < heap->size && heap->arr[rightChild] < heap->arr[smallest])
+        smallest = rightChild;
+    if (smallest != index) {
+        swap(&heap->arr[index], &heap->arr[smallest]);
+        heapifyDown(heap, smallest);
+    }
+}
+void deleteMin(struct MinHeap *heap) {
+    if (heap->size == 0) {
+        printf("Heap is empty\n");
+        return;
+    }
+    heap->arr[0] = heap->arr[heap->size - 1];
+    heap->size--;
+    heapifyDown(heap, 0);
+}
+void display(struct MinHeap *heap) {
+    if (heap->size == 0) {
+        printf("Heap is empty\n");
+        return;
+    }
+    printf("Min Heap: ");
+    for (int i = 0; i < heap->size; i++) {
+        printf("%d ", heap->arr[i]);
+    }
+    printf("\n");
+}
+int main() {
+    struct MinHeap heap;
+    heap.size = 0;
+    insert(&heap, 3);
+    insert(&heap, 5);
+    insert(&heap, 1);
+    insert(&heap, 9);
+    display(&heap);
+    deleteMin(&heap);
+    display(&heap);
+    return 0;
+}
+output:
+Min Heap: 1 5 3 9 
+Min Heap: 3 5 9 
